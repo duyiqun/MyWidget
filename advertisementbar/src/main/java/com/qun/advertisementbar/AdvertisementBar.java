@@ -42,7 +42,7 @@ public class AdvertisementBar extends RelativeLayout {
         this(context, attrs, defStyleAttr);
     }
 
-    public void setData(final int[] imgIds, String[] titles) {
+    public void setData(final int[] imgIds, final String[] titles) {
         mViewPager.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
@@ -78,5 +78,26 @@ public class AdvertisementBar extends RelativeLayout {
                 container.removeView((View) object);
             }
         });
+        //初始化标题
+        mTextView.setText(titles[0]);
+        //给ViewPager添加监听器
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mTextView.setText(titles[position]);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        //初始化指示器
+        
     }
 }
