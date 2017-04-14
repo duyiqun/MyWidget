@@ -68,12 +68,21 @@ public class AdvertisementBar extends RelativeLayout {
              * @return
              */
             @Override
-            public Object instantiateItem(ViewGroup container, int position) {
+            public Object instantiateItem(ViewGroup container, final int position) {
                 ImageView imageView = new ImageView(getContext());
                 imageView.setImageResource(imgIds[position]);
                 ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                 imageView.setLayoutParams(layoutParams);
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                //给ImageView绑定点击事件
+                imageView.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mOnItemClickListener!=null){
+                            mOnItemClickListener.onItemClick(position);
+                        }
+                    }
+                });
                 //注意：必须将ImageView添加到container上
                 container.addView(imageView);
                 //注意：必须将ImageView返回
@@ -176,5 +185,15 @@ public class AdvertisementBar extends RelativeLayout {
         Log.d(TAG, "onDetachedFromWindow: ");
         //停止mHandler任务
         mHandler.removeCallbacksAndMessages(null);
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+
+    private OnItemClickListener mOnItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
     }
 }

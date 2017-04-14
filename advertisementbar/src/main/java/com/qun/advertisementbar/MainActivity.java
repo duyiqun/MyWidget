@@ -2,6 +2,7 @@ package com.qun.advertisementbar;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,5 +17,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mAdvertisementBar = (AdvertisementBar) findViewById(R.id.advertisementBar);
         mAdvertisementBar.setData(imgIds, titles);
+        mAdvertisementBar.setOnItemClickListener(new AdvertisementBar.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Toast.makeText(MainActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
