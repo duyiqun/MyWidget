@@ -84,7 +84,7 @@ public class YouKuMenu extends RelativeLayout implements View.OnClickListener {
                     showView(mRlLevel2);
                 }
                 isLevel2Show = !isLevel2Show;
-                if(mOnMenuStateChangeListener!=null){
+                if (mOnMenuStateChangeListener != null) {
                     mOnMenuStateChangeListener.onLevel2Changed(isLevel2Show);
                     mOnMenuStateChangeListener.onLevel3Changed(isLevel3Show);
                 }
@@ -92,12 +92,11 @@ public class YouKuMenu extends RelativeLayout implements View.OnClickListener {
             case R.id.iv_menu:
                 if (isLevel3Show) {
                     hideView(mRlLevel3);
-                    isLevel3Show = false;
                 } else {
                     showView(mRlLevel3);
-                    isLevel3Show = true;
                 }
-                if(mOnMenuStateChangeListener!=null){
+                isLevel3Show = !isLevel3Show;
+                if (mOnMenuStateChangeListener != null) {
                     mOnMenuStateChangeListener.onLevel2Changed(isLevel2Show);
                     mOnMenuStateChangeListener.onLevel3Changed(isLevel3Show);
                 }
@@ -112,6 +111,9 @@ public class YouKuMenu extends RelativeLayout implements View.OnClickListener {
         hideAnimation.setDuration(1000);
         hideAnimation.setFillAfter(true);//维持动画执行完后的状态
         relativeLayout.startAnimation(hideAnimation);
+        for (int i = 0; i < relativeLayout.getChildCount(); i++) {
+            relativeLayout.getChildAt(i).setEnabled(true);
+        }
     }
 
     /**
@@ -140,6 +142,7 @@ public class YouKuMenu extends RelativeLayout implements View.OnClickListener {
 
     public interface onMenuStateChangeListener {
         void onLevel3Changed(boolean isOpen);
+
         void onLevel2Changed(boolean isOpen);
     }
 
