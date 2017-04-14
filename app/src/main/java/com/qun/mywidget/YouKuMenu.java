@@ -99,12 +99,6 @@ public class YouKuMenu extends RelativeLayout implements View.OnClickListener {
         }
     }
 
-    /**
-     * 其实就是让传递过来的参数旋转180度（0--180）
-     * 注意：当用补间动画隐藏一个ViewGroup的时候，一定要将该ViewGroup中的所有子控件的都不可点击(不可用)
-     *
-     * @param relativeLayout
-     */
     private void showView(RelativeLayout relativeLayout) {
         RotateAnimation hideAnimation = new RotateAnimation(180, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 1f);
         hideAnimation.setDuration(1000);
@@ -112,12 +106,24 @@ public class YouKuMenu extends RelativeLayout implements View.OnClickListener {
         relativeLayout.startAnimation(hideAnimation);
     }
 
+    /**
+     * 其实就是让传递过来的参数旋转180度（0--180）
+     * 注意：当用补间动画隐藏一个ViewGroup的时候，一定要将该ViewGroup中的所有子控件的都不可点击(不可用)
+     *
+     * @param relativeLayout
+     */
     private void hideView(RelativeLayout relativeLayout, int startOffset) {
         RotateAnimation hideAnimation = new RotateAnimation(0, 180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 1f);
         hideAnimation.setDuration(1000);
         hideAnimation.setFillAfter(true);//维持动画执行完后的状态
-        hideAnimation.setStartOffset(startOffset);
+        hideAnimation.setStartOffset(startOffset);//延迟启动，等startOffset毫秒之后才会启动
         relativeLayout.startAnimation(hideAnimation);
+
+        //下面的代码只能将该控件设置为不可用，但是不会影响其子控件的正常的使用
+        //relativeLayout.setEnabled(false);
+        for (int i = 0; i < relativeLayout.getChildCount(); i++) {
+            relativeLayout.getChildAt(i).setEnabled(false);
+        }
     }
 
     private void hideView(RelativeLayout relativeLayout) {
