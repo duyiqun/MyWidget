@@ -106,11 +106,12 @@ public class YouKuMenu extends RelativeLayout implements View.OnClickListener {
         }
     }
 
-    private void showView(RelativeLayout relativeLayout) {
-        RotateAnimation hideAnimation = new RotateAnimation(180, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 1f);
-        hideAnimation.setDuration(1000);
-        hideAnimation.setFillAfter(true);//维持动画执行完后的状态
-        relativeLayout.startAnimation(hideAnimation);
+    private void showView(RelativeLayout relativeLayout, int startOffset) {
+        RotateAnimation showAnimation = new RotateAnimation(180, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 1f);
+        showAnimation.setDuration(1000);
+        showAnimation.setFillAfter(true);//维持动画执行完后的状态
+        showAnimation.setStartOffset(startOffset);//延迟启动，等startOffset毫秒之后才会启动
+        relativeLayout.startAnimation(showAnimation);
         for (int i = 0; i < relativeLayout.getChildCount(); i++) {
             relativeLayout.getChildAt(i).setEnabled(true);
         }
@@ -136,6 +137,10 @@ public class YouKuMenu extends RelativeLayout implements View.OnClickListener {
         }
     }
 
+    private void showView(RelativeLayout relativeLayout) {
+        showView(relativeLayout, 0);
+    }
+
     private void hideView(RelativeLayout relativeLayout) {
         hideView(relativeLayout, 0);
     }
@@ -143,8 +148,8 @@ public class YouKuMenu extends RelativeLayout implements View.OnClickListener {
     public void openMenu() {
         if (!isLevel2Show) {
             showView(mRlLevel2);
-        }
-        if (!isLevel3Show) {
+            showView(mRlLevel3, 300);
+        } else if (!isLevel3Show) {
             showView(mRlLevel3);
         }
         isLevel2Show = true;
