@@ -1,10 +1,13 @@
 package com.qun.advertisementbar;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,10 +21,13 @@ import android.widget.TextView;
 
 public class AdvertisementBar extends RelativeLayout {
 
+    public static final int DELAY_MILLIS = 2000;
+    private static final String TAG = "AdvertisementBar";
     private ViewPager mViewPager;
     private LinearLayout mLlDots;
     private TextView mTextView;
     protected int currentIndex;
+    private Handler mHandler = new Handler();
 
     public AdvertisementBar(Context context) {
         this(context, null);
@@ -90,7 +96,9 @@ public class AdvertisementBar extends RelativeLayout {
 
             @Override
             public void onPageSelected(int position) {
+//                Log.d(TAG, "onPageSelected: " + position);
                 mTextView.setText(titles[position]);
+                //改变指示器
                 mLlDots.getChildAt(position).setSelected(true);
                 mLlDots.getChildAt(currentIndex).setSelected(false);
                 currentIndex = position;
@@ -114,5 +122,59 @@ public class AdvertisementBar extends RelativeLayout {
                 imageView.setSelected(true);
             }
         }
+        //开启自动轮播功能
+        startLoop();
+        mViewPager.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        Log.d(TAG, "onTouch: down");
+                        //停止Handler任务
+                        mHandler.removeCallbacksAndMessages(null);
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        Log.d(TAG, "onTouch: move");
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        Log.d(TAG, "onTouch: up");
+                        startLoop();
+                        break;
+                }
+                /**
+                 * 注意：如果返回true，那么就代表着我们自己的触摸监听器要处理触摸事件，ViewPager就不会在自己内部处理触摸事件（让ViewPager跟着手指的滑动而滑动）
+                 *      如果返回false,那么ViewPager内部依然会处理自己的触摸事件
+                 */
+                return true;
+            }
+        });
+    }
+
+    private void startLoop() {
+        mHandler.removeCallbacksAndMessages(null);
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //获取当前的页数 + 1 作为新的页数
+                int newItem = (mViewPager.getCurrentItem() + 1) % mViewPager.getAdapter().getCount();
+                mViewPager.setCurrentItem(newItem, true);
+//                Log.d(TAG, "翻页了: " + newItem);
+                mHandler.postDelayed(this, DELAY_MILLIS);
+            }
+        }, DELAY_MILLIS);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        Log.d(TAG, "onAttachedToWindow: ");
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        Log.d(TAG, "onDetachedFromWindow: ");
+        //停止mHandler任务
+        mHandler.removeCallbacksAndMessages(null);
     }
 }
