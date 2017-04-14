@@ -84,6 +84,10 @@ public class YouKuMenu extends RelativeLayout implements View.OnClickListener {
                     showView(mRlLevel2);
                 }
                 isLevel2Show = !isLevel2Show;
+                if(mOnMenuStateChangeListener!=null){
+                    mOnMenuStateChangeListener.onLevel2Changed(isLevel2Show);
+                    mOnMenuStateChangeListener.onLevel3Changed(isLevel3Show);
+                }
                 break;
             case R.id.iv_menu:
                 if (isLevel3Show) {
@@ -92,6 +96,10 @@ public class YouKuMenu extends RelativeLayout implements View.OnClickListener {
                 } else {
                     showView(mRlLevel3);
                     isLevel3Show = true;
+                }
+                if(mOnMenuStateChangeListener!=null){
+                    mOnMenuStateChangeListener.onLevel2Changed(isLevel2Show);
+                    mOnMenuStateChangeListener.onLevel3Changed(isLevel3Show);
                 }
                 break;
             default:
@@ -128,5 +136,16 @@ public class YouKuMenu extends RelativeLayout implements View.OnClickListener {
 
     private void hideView(RelativeLayout relativeLayout) {
         hideView(relativeLayout, 0);
+    }
+
+    public interface onMenuStateChangeListener {
+        void onLevel3Changed(boolean isOpen);
+        void onLevel2Changed(boolean isOpen);
+    }
+
+    private onMenuStateChangeListener mOnMenuStateChangeListener;
+
+    public void setOnMenuStateChangeListener(onMenuStateChangeListener onMenuStateChangeListener) {
+        mOnMenuStateChangeListener = onMenuStateChangeListener;
     }
 }
