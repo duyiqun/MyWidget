@@ -2,6 +2,7 @@ package com.qun.mywidget;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,5 +25,13 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "2级菜单" + (isOpen ? "打开了" : "关闭了"), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void closeMenu(View view) {
+        mYouKuMenu.closeMenu();
+    }
+
+    public void openMenu(View view) {
+        mYouKuMenu.openMenu();
     }
 }

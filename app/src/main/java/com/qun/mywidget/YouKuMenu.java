@@ -140,6 +140,28 @@ public class YouKuMenu extends RelativeLayout implements View.OnClickListener {
         hideView(relativeLayout, 0);
     }
 
+    public void openMenu() {
+        if (!isLevel2Show) {
+            showView(mRlLevel2);
+        }
+        if (!isLevel3Show) {
+            showView(mRlLevel3);
+        }
+        isLevel2Show = true;
+        isLevel3Show = true;
+    }
+
+    public void closeMenu() {
+        if (isLevel3Show) {
+            hideView(mRlLevel3);
+            hideView(mRlLevel2, 300);
+        } else if (isLevel2Show) {//3级菜单是隐藏的，2级菜单时显示的
+            hideView(mRlLevel2);
+        }
+        isLevel2Show = false;
+        isLevel3Show = false;
+    }
+
     public interface onMenuStateChangeListener {
         void onLevel3Changed(boolean isOpen);
 
