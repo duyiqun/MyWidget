@@ -21,6 +21,7 @@ public class AdvertisementBar extends RelativeLayout {
     private ViewPager mViewPager;
     private LinearLayout mLlDots;
     private TextView mTextView;
+    protected int currentIndex;
 
     public AdvertisementBar(Context context) {
         this(context, null);
@@ -90,6 +91,9 @@ public class AdvertisementBar extends RelativeLayout {
             @Override
             public void onPageSelected(int position) {
                 mTextView.setText(titles[position]);
+                mLlDots.getChildAt(position).setSelected(true);
+                mLlDots.getChildAt(currentIndex).setSelected(false);
+                currentIndex = position;
             }
 
             @Override
@@ -98,6 +102,17 @@ public class AdvertisementBar extends RelativeLayout {
             }
         });
         //初始化指示器
-        
+        for (int i = 0; i < imgIds.length; i++) {
+            ImageView imageView = new ImageView(getContext());
+            imageView.setImageResource(R.drawable.dot_selector);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.leftMargin = 30;//像素
+            imageView.setLayoutParams(layoutParams);
+            mLlDots.addView(imageView, layoutParams);
+            if (i == 0) {
+                //默认将第一个图标选中
+                imageView.setSelected(true);
+            }
+        }
     }
 }
