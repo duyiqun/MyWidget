@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -12,6 +13,8 @@ import android.view.View;
  */
 
 public class ToggleButton extends View {
+    private static final String TAG = "ToggleButton";
+
     public ToggleButton(Context context) {
         this(context, null);
     }
@@ -43,8 +46,16 @@ public class ToggleButton extends View {
         //MeasureSpec.UNSPECIFIED;
 //        int width = MeasureSpec.makeMeasureSpec(100, MeasureSpec.EXACTLY);
 //        setMeasuredDimension(width, 50);
-
-
+        int mode = MeasureSpec.getMode(widthMeasureSpec);
+        int size = MeasureSpec.getSize(widthMeasureSpec);
+        if (mode == MeasureSpec.EXACTLY) {
+            Log.d(TAG, "onMeasure: EXACTLY");
+        } else if (size == MeasureSpec.AT_MOST) {
+            Log.d(TAG, "onMeasure: AT_MOST");
+        } else {
+            Log.d(TAG, "onMeasure: UNSPECIFIED");
+        }
+        Log.d(TAG, "onMeasure: " + size);
     }
 
     /**
