@@ -78,7 +78,7 @@ public class AdvertisementBar extends RelativeLayout {
                 imageView.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (mOnItemClickListener!=null){
+                        if (mOnItemClickListener != null) {
                             mOnItemClickListener.onItemClick(position);
                         }
                     }
@@ -187,7 +187,7 @@ public class AdvertisementBar extends RelativeLayout {
         mHandler.removeCallbacksAndMessages(null);
     }
 
-    public interface OnItemClickListener{
+    public interface OnItemClickListener {
         void onItemClick(int position);
     }
 
