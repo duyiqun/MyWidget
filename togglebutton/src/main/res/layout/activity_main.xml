@@ -7,7 +7,7 @@
     tools:context="com.qun.togglebutton.MainActivity">
 
     <com.qun.togglebutton.ToggleButton
-        android:layout_width="120dp"
+        android:layout_width="wrap_content"
         android:layout_height="60dp"/>
 
 </RelativeLayout>

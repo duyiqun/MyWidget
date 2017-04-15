@@ -1,11 +1,12 @@
 package com.qun.togglebutton;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 /**
@@ -14,6 +15,14 @@ import android.view.View;
 
 public class ToggleButton extends View {
     private static final String TAG = "ToggleButton";
+    private Bitmap mBackBitmap;
+    private Bitmap mUpBitmap;
+    private int mBackBitmapWidth;
+    private int mBackBitmapHeight;
+    private int mUpBitmapWidth;
+    private int mUpBitmapHeight;
+    private boolean isOpen = false;
+    private float mLeft;
 
     public ToggleButton(Context context) {
         this(context, null);
@@ -21,6 +30,13 @@ public class ToggleButton extends View {
 
     public ToggleButton(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        //将图片转换为Bitmap对象
+        mBackBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.switch_background);
+        mUpBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.slide_button);
+        mBackBitmapWidth = mBackBitmap.getWidth();
+        mBackBitmapHeight = mBackBitmap.getHeight();
+        mUpBitmapWidth = mUpBitmap.getWidth();
+        mUpBitmapHeight = mUpBitmap.getHeight();
     }
 
     public ToggleButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -39,23 +55,25 @@ public class ToggleButton extends View {
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
         //MeasureSpec.EXACTLY;
         //MeasureSpec.AT_MOST;
         //MeasureSpec.UNSPECIFIED;
 //        int width = MeasureSpec.makeMeasureSpec(100, MeasureSpec.EXACTLY);
 //        setMeasuredDimension(width, 50);
-        int mode = MeasureSpec.getMode(widthMeasureSpec);
-        int size = MeasureSpec.getSize(widthMeasureSpec);
-        if (mode == MeasureSpec.EXACTLY) {
-            Log.d(TAG, "onMeasure: EXACTLY");
-        } else if (size == MeasureSpec.AT_MOST) {
-            Log.d(TAG, "onMeasure: AT_MOST");
-        } else {
-            Log.d(TAG, "onMeasure: UNSPECIFIED");
-        }
-        Log.d(TAG, "onMeasure: " + size);
+//        int mode = MeasureSpec.getMode(widthMeasureSpec);
+//        int size = MeasureSpec.getSize(widthMeasureSpec);
+//        if (mode == MeasureSpec.EXACTLY) {
+//            Log.d(TAG, "onMeasure: EXACTLY");
+//        } else if (size == MeasureSpec.AT_MOST) {
+//            Log.d(TAG, "onMeasure: AT_MOST");
+//        } else {
+//            Log.d(TAG, "onMeasure: UNSPECIFIED");
+//        }
+//        Log.d(TAG, "onMeasure: " + size);
+        //设置我们的View的宽和高
+        setMeasuredDimension(mBackBitmapWidth, mUpBitmapHeight);
     }
 
     /**
@@ -75,6 +93,41 @@ public class ToggleButton extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawColor(Color.RED);
+//        canvas.drawColor(Color.RED);
+        //将Bitmap绘制到画布上
+        canvas.drawBitmap(mBackBitmap, 0, 0, null);
+//        if (isOpen) {
+//            mLeft = mBackBitmapWidth - mUpBitmapWidth;
+//        } else {
+//            mLeft = 0;
+//        }
+        canvas.drawBitmap(mUpBitmap, mLeft, 0, null);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_MOVE:
+                float startX = event.getX();
+                mLeft = startX - mUpBitmapWidth / 2;
+                fixLeft();
+                invalidate();
+                break;
+            case MotionEvent.ACTION_UP:
+
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
+    private void fixLeft() {
+        if (mLeft < 0) {
+            mLeft = 0;
+        } else if (mLeft > mBackBitmapWidth - mUpBitmapWidth) {
+            mLeft = mBackBitmapWidth - mUpBitmapWidth;
+        }
     }
 }
