@@ -1,1 +1,1 @@
-include ':youkumenu', ':advertisementbar'
+include ':youkumenu', ':advertisementbar', ':togglebutton'

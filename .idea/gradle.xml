@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/advertisementbar" />
+            <option value="$PROJECT_DIR$/togglebutton" />
             <option value="$PROJECT_DIR$/youkumenu" />
           </set>
         </option>
