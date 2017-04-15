@@ -1,6 +1,7 @@
 package com.qun.togglebutton;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -21,8 +22,9 @@ public class ToggleButton extends View {
     private int mBackBitmapHeight;
     private int mUpBitmapWidth;
     private int mUpBitmapHeight;
-    private boolean isOpen = false;
+    private boolean isOpen;
     private float mLeft;
+    private boolean isFirstIn = true;
 
     public ToggleButton(Context context) {
         this(context, null);
@@ -37,6 +39,12 @@ public class ToggleButton extends View {
         mBackBitmapHeight = mBackBitmap.getHeight();
         mUpBitmapWidth = mUpBitmap.getWidth();
         mUpBitmapHeight = mUpBitmap.getHeight();
+        //从attrs中获取app:isOpen="true"属性
+//        boolean isOpen = attrs.getAttributeBooleanValue("http://schemas.android.com/apk/res-auto", "isOpen", false);
+        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.ToggleButton);
+        isOpen = attributes.getBoolean(R.styleable.ToggleButton_isOpen, false);
+        //释放资源
+        attributes.recycle();
     }
 
     public ToggleButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -55,15 +63,19 @@ public class ToggleButton extends View {
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
+//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+//
         //MeasureSpec.EXACTLY;
         //MeasureSpec.AT_MOST;
         //MeasureSpec.UNSPECIFIED;
+
 //        int width = MeasureSpec.makeMeasureSpec(100, MeasureSpec.EXACTLY);
 //        setMeasuredDimension(width, 50);
+
+        //获取测量模式
 //        int mode = MeasureSpec.getMode(widthMeasureSpec);
 //        int size = MeasureSpec.getSize(widthMeasureSpec);
+
 //        if (mode == MeasureSpec.EXACTLY) {
 //            Log.d(TAG, "onMeasure: EXACTLY");
 //        } else if (size == MeasureSpec.AT_MOST) {
@@ -72,8 +84,9 @@ public class ToggleButton extends View {
 //            Log.d(TAG, "onMeasure: UNSPECIFIED");
 //        }
 //        Log.d(TAG, "onMeasure: " + size);
+
         //设置我们的View的宽和高
-        setMeasuredDimension(mBackBitmapWidth, mUpBitmapHeight);
+        setMeasuredDimension(mBackBitmapWidth, mBackBitmapHeight);
     }
 
     /**
@@ -95,12 +108,16 @@ public class ToggleButton extends View {
         super.onDraw(canvas);
 //        canvas.drawColor(Color.RED);
         //将Bitmap绘制到画布上
+        //从当前View的(0,0)开始绘制背景图片
         canvas.drawBitmap(mBackBitmap, 0, 0, null);
-//        if (isOpen) {
-//            mLeft = mBackBitmapWidth - mUpBitmapWidth;
-//        } else {
-//            mLeft = 0;
-//        }
+        if (isFirstIn) {
+            if (isOpen) {
+                mLeft = mBackBitmapWidth - mUpBitmapWidth;
+            } else {
+                mLeft = 0;
+            }
+            isFirstIn = false;
+        }
         canvas.drawBitmap(mUpBitmap, mLeft, 0, null);
     }
 
@@ -109,18 +126,41 @@ public class ToggleButton extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
-                float startX = event.getX();
-                mLeft = startX - mUpBitmapWidth / 2;
+                float currentX = event.getX();
+                mLeft = currentX - mUpBitmapWidth / 2;
                 fixLeft();
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-
+                float upX = event.getX();
+                mLeft = upX - mUpBitmapWidth / 2;
+                if (mLeft > (mBackBitmapWidth - mUpBitmapWidth) / 2) {
+                    open();
+                } else {
+                    close();
+                }
+                invalidate();
                 break;
             default:
                 break;
         }
         return true;
+    }
+
+    private void open() {
+        mLeft = mBackBitmapWidth - mUpBitmapWidth;
+        isOpen = true;
+        if (mOnOpenStateChangeListener != null) {
+            mOnOpenStateChangeListener.onOpenChange(isOpen);
+        }
+    }
+
+    private void close() {
+        mLeft = 0;
+        isOpen = false;
+        if (mOnOpenStateChangeListener != null) {
+            mOnOpenStateChangeListener.onOpenChange(isOpen);
+        }
     }
 
     private void fixLeft() {
@@ -129,5 +169,19 @@ public class ToggleButton extends View {
         } else if (mLeft > mBackBitmapWidth - mUpBitmapWidth) {
             mLeft = mBackBitmapWidth - mUpBitmapWidth;
         }
+    }
+
+    public interface onOpenStateChangeListener {
+        void onOpenChange(boolean isOpen);
+    }
+
+    private onOpenStateChangeListener mOnOpenStateChangeListener;
+
+    public void setOnOpenStateChangeListener(onOpenStateChangeListener onOpenStateChangeListener) {
+        this.mOnOpenStateChangeListener = onOpenStateChangeListener;
+    }
+
+    public boolean isOpen(){
+        return isOpen;
     }
 }
