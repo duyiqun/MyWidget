@@ -43,7 +43,7 @@ public class ToggleButton extends View {
         //MeasureSpec.UNSPECIFIED;
 //        int width = MeasureSpec.makeMeasureSpec(100, MeasureSpec.EXACTLY);
 //        setMeasuredDimension(width, 50);
-        
+
 
     }
 
