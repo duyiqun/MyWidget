@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -20,19 +21,21 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private static final String DB_NAME = "city.s3db";
     private EditText mEtAddress;
     private Button mBtn;
-    private List<Address> provinceList = new ArrayList<>();
-    private List<Address> cityList = new ArrayList<>();
-    private List<Address> districtList = new ArrayList<>();
+    private List<Address> mProvinceList = new ArrayList<>();
+    private List<Address> mCityList = new ArrayList<>();
+    private List<Address> mDistrictList = new ArrayList<>();
     private PopupWindow mPopupWindow;
     private ListView mLvProvince;
     private ListView mLvCity;
     private ListView mLvDistrict;
     private AddressAdapter mProvinceAdapter;
+    private AddressAdapter mCityAdapter;
+    private AddressAdapter mDistrictAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initProvince() {
-        provinceList.clear();
+        mProvinceList.clear();
         SQLiteDatabase database = openOrCreateDatabase(DB_NAME, MODE_PRIVATE, null);
         Cursor cursor = database.rawQuery("select code,name from province", null);
         while (cursor.moveToNext()) {
@@ -88,12 +91,12 @@ public class MainActivity extends AppCompatActivity {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            provinceList.add(address);
+            mProvinceList.add(address);
         }
         cursor.close();
         database.close();
         //将数据展示到ListView上
-        mProvinceAdapter = new AddressAdapter(provinceList);
+        mProvinceAdapter = new AddressAdapter(mProvinceList);
         mLvProvince.setAdapter(mProvinceAdapter);
     }
 
@@ -103,11 +106,86 @@ public class MainActivity extends AppCompatActivity {
         mLvProvince = (ListView) popupView.findViewById(R.id.lv_province);
         mLvCity = (ListView) popupView.findViewById(R.id.lv_city);
         mLvDistrict = (ListView) popupView.findViewById(R.id.lv_district);
+        mLvProvince.setOnItemClickListener(this);
+        mLvCity.setOnItemClickListener(this);
+        mLvDistrict.setOnItemClickListener(this);
     }
 
     public void selectAddress(View view) {
         //popupView依附的锚点View
         mPopupWindow.showAsDropDown(mBtn, 0, 0);
     }
-    
+
+    /**
+     * @param parent   被点击的ListView对象本身
+     * @param view     ListView对象中的被点击的条目
+     * @param position 点击的脚标
+     * @param id
+     */
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        switch (parent.getId()) {
+            case R.id.lv_province:
+                clearSelected(mProvinceList);
+                //修改背景为选中
+                mProvinceList.get(position).isSelected = true;
+                mProvinceAdapter.notifyDataSetChanged();
+                //更新lvCity
+                updateAddressList(mProvinceList.get(position).code, "city", mCityList);
+                if (mCityAdapter == null) {
+                    mCityAdapter = new AddressAdapter(mCityList);
+                    mLvCity.setAdapter(mCityAdapter);
+                } else {
+                    mCityAdapter.notifyDataSetChanged();
+                }
+                break;
+            case R.id.lv_city:
+                clearSelected(mCityList);
+                //修改背景为选中
+                mCityList.get(position).isSelected = true;
+                mCityAdapter.notifyDataSetChanged();
+                //更新district
+                updateAddressList(mCityList.get(position).code, "district", mDistrictList);
+                if (mDistrictAdapter == null) {
+                    mDistrictAdapter = new AddressAdapter(mDistrictList);
+                    mLvDistrict.setAdapter(mDistrictAdapter);
+                } else {
+                    mDistrictAdapter.notifyDataSetChanged();
+                }
+                break;
+            case R.id.lv_district:
+                clearSelected(mDistrictList);
+                //修改背景为选中
+                mDistrictList.get(position).isSelected = true;
+                mDistrictAdapter.notifyDataSetChanged();
+                break;
+        }
+    }
+
+    private void updateAddressList(String code, String tableName, List<Address> addressList) {
+        //读取数据库到集合中
+        SQLiteDatabase database = openOrCreateDatabase(DB_NAME, MODE_PRIVATE, null);
+        Cursor cursor = database.query(tableName, new String[]{"code", "name"}, "pcode=?", new String[]{code}, null, null, null);
+        addressList.clear();
+        while (cursor.moveToNext()) {
+            Address address = new Address();
+            address.code = cursor.getString(0);
+            byte[] blob = cursor.getBlob(1);
+            try {
+                address.name = new String(blob, "gbk");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            addressList.add(address);
+        }
+        cursor.close();
+        database.close();
+
+    }
+
+    private void clearSelected(List<Address> addressList) {
+        for (Address address : addressList) {
+            address.isSelected = false;
+        }
+    }
 }

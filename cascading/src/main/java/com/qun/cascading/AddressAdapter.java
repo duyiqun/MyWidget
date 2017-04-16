@@ -51,9 +51,9 @@ public class AddressAdapter extends BaseAdapter {
         viewHolder.tvAddress.setText(address.name);
         //需要根据address的isSelect属性判断当前convertView是否显示选中状态
         if (address.isSelected) {
-            viewHolder.tvAddress.setBackgroundResource(R.mipmap.choose_item_selected);
+            convertView.setBackgroundResource(R.mipmap.choose_item_selected);
         } else {
-            viewHolder.tvAddress.setBackgroundColor(Color.TRANSPARENT);
+            convertView.setBackgroundColor(Color.TRANSPARENT);
         }
         return convertView;
     }
