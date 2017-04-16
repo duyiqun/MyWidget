@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/MyWidget.iml" filepath="$PROJECT_DIR$/MyWidget.iml" />
       <module fileurl="file://$PROJECT_DIR$/advertisementbar/advertisementbar.iml" filepath="$PROJECT_DIR$/advertisementbar/advertisementbar.iml" />
       <module fileurl="file://$PROJECT_DIR$/cascading/cascading.iml" filepath="$PROJECT_DIR$/cascading/cascading.iml" />
+      <module fileurl="file://$PROJECT_DIR$/myviewpager/myviewpager.iml" filepath="$PROJECT_DIR$/myviewpager/myviewpager.iml" />
       <module fileurl="file://$PROJECT_DIR$/togglebutton/togglebutton.iml" filepath="$PROJECT_DIR$/togglebutton/togglebutton.iml" />
       <module fileurl="file://$PROJECT_DIR$/youkumenu/youkumenu.iml" filepath="$PROJECT_DIR$/youkumenu/youkumenu.iml" />
     </modules>
