@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private AddressAdapter mProvinceAdapter;
     private AddressAdapter mCityAdapter;
     private AddressAdapter mDistrictAdapter;
+    private String mProvince;
+    private String mCity;
+    private String mDistrict;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,22 +129,34 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (parent.getId()) {
             case R.id.lv_province:
-                clearSelected(mProvinceList);
                 //修改背景为选中
+                clearSelected(mProvinceList);
                 mProvinceList.get(position).isSelected = true;
                 mProvinceAdapter.notifyDataSetChanged();
                 //更新lvCity
                 updateAddressList(mProvinceList.get(position).code, "city", mCityList);
+                //设置Adapter给ListView
                 if (mCityAdapter == null) {
                     mCityAdapter = new AddressAdapter(mCityList);
                     mLvCity.setAdapter(mCityAdapter);
                 } else {
+                    //更新Adapter
                     mCityAdapter.notifyDataSetChanged();
                 }
+                //清空district
+                mDistrictList.clear();
+                if (mDistrictAdapter != null) {
+                    mDistrictAdapter.notifyDataSetChanged();
+                }
+                //点击省的时候，将province显示到编辑框
+                mProvince = mProvinceList.get(position).name;
+                mCity = "";
+                mDistrict = "";
+                mEtAddress.setText(mProvince + " " + mCity + " " + mDistrict);
                 break;
             case R.id.lv_city:
-                clearSelected(mCityList);
                 //修改背景为选中
+                clearSelected(mCityList);
                 mCityList.get(position).isSelected = true;
                 mCityAdapter.notifyDataSetChanged();
                 //更新district
@@ -152,12 +167,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 } else {
                     mDistrictAdapter.notifyDataSetChanged();
                 }
+                mCity = mCityList.get(position).name;
+                mDistrict = "";
+                mEtAddress.setText(mProvince + " " + mCity + " " + mDistrict);
                 break;
             case R.id.lv_district:
-                clearSelected(mDistrictList);
                 //修改背景为选中
+                clearSelected(mDistrictList);
                 mDistrictList.get(position).isSelected = true;
                 mDistrictAdapter.notifyDataSetChanged();
+                mDistrict = mDistrictList.get(position).name;
+                mEtAddress.setText(mProvince + " " + mCity + " " + mDistrict);
                 break;
         }
     }
