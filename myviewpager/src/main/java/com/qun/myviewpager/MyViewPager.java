@@ -19,6 +19,8 @@ public class MyViewPager extends ViewGroup {
     private int mMeasuredHeight;
     private float mStartX;
     private Scroller mScroller;
+    private float mStartX1;
+    private float mStartY1;
 
     public MyViewPager(Context context) {
         this(context, null);
@@ -87,9 +89,9 @@ public class MyViewPager extends ViewGroup {
                 mStartX = event.getX();
                 break;
             case MotionEvent.ACTION_MOVE:
-                float mCurrentX = event.getX();
-                float dx = mStartX - mCurrentX;
-                mStartX = mCurrentX;
+                float currentX = event.getX();
+                float dx = mStartX - currentX;
+                mStartX = currentX;
                 //获取上次累计的偏移量 + dx
                 //getScrollX() ViewGroup已经发生的偏移量（往左滚动是正的）
                 float newScrollX = getScrollX() + dx;
@@ -122,8 +124,31 @@ public class MyViewPager extends ViewGroup {
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        return super.onInterceptTouchEvent(ev);
+    public boolean onInterceptTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                //记录一下down的位置，方便以后ViewPager的move
+                mStartX = event.getX();
+
+                mStartX1 = event.getX();
+                mStartY1 = event.getY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float currentX = event.getX();
+                float currentY = event.getY();
+                float dx = Math.abs(currentX - mStartX1);
+                float dy = Math.abs(currentY - mStartY1);
+                mStartX1 = currentX;
+                mStartY1 = currentY;
+                if (dx >= dy) {
+                    //水平滚动,拦截事件
+                    return true;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+        }
+        return false;
     }
 
     /**
