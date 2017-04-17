@@ -116,6 +116,10 @@ public class MyViewPager extends ViewGroup {
                  */
                 mScroller.startScroll(scrollX, 0, dx2, 0, Math.abs(dx2));
                 invalidate();
+
+                if (mOnPageChangedListener != null) {
+                    mOnPageChangedListener.onPageSelected(position);
+                }
                 break;
             default:
                 break;
@@ -189,5 +193,15 @@ public class MyViewPager extends ViewGroup {
             //将ImageView添加到ViewGroup中
             addView(imageView);
         }
+    }
+
+    public interface onPageChangedListener {
+        void onPageSelected(int position);
+    }
+
+    private onPageChangedListener mOnPageChangedListener;
+
+    public void setOnPageChangedListener(onPageChangedListener onPageChangedListener) {
+        this.mOnPageChangedListener = onPageChangedListener;
     }
 }
