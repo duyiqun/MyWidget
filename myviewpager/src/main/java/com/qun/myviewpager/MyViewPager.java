@@ -123,19 +123,25 @@ public class MyViewPager extends ViewGroup {
         return true;
     }
 
+    /**
+     * 用于判断是否拦截子控件的触摸事件
+     *
+     * @param ev
+     * @return
+     */
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent event) {
-        switch (event.getAction()) {
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 //记录一下down的位置，方便以后ViewPager的move
-                mStartX = event.getX();
+                mStartX = ev.getX();
 
-                mStartX1 = event.getX();
-                mStartY1 = event.getY();
+                mStartX1 = ev.getX();
+                mStartY1 = ev.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
-                float currentX = event.getX();
-                float currentY = event.getY();
+                float currentX = ev.getX();
+                float currentY = ev.getY();
                 float dx = Math.abs(currentX - mStartX1);
                 float dy = Math.abs(currentY - mStartY1);
                 mStartX1 = currentX;
