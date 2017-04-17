@@ -2,6 +2,7 @@ package com.qun.myviewpager;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -14,6 +15,7 @@ public class MyViewPager extends ViewGroup {
 
     private int mMeasuredWidth;
     private int mMeasuredHeight;
+    private float mStartX;
 
     public MyViewPager(Context context) {
         this(context, null);
@@ -69,9 +71,30 @@ public class MyViewPager extends ViewGroup {
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
-            child.layout(0, 0, mMeasuredWidth, mMeasuredHeight);
+            child.layout(mMeasuredWidth * i, 0, mMeasuredWidth * (i + 1), mMeasuredHeight);
 
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mStartX = event.getX();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float mCurrentX = event.getX();
+                float dx = mStartX - mCurrentX;
+                mStartX = mCurrentX;
+                
+                break;
+            case MotionEvent.ACTION_UP:
+
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 
     /**
