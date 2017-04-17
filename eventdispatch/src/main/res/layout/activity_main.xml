@@ -7,18 +7,21 @@
     tools:context="com.qun.eventdispatch.MainActivity">
 
     <com.qun.eventdispatch.ViewGroupA
+        android:id="@+id/viewGroupA"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_centerInParent="true"
         android:background="#ff0000">
 
         <com.qun.eventdispatch.ViewGroupB
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:id="@+id/viewGroupB"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
             android:layout_centerInParent="true"
             android:background="#00ff00">
 
             <com.qun.eventdispatch.MyView
+                android:id="@+id/myView"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_centerInParent="true"
