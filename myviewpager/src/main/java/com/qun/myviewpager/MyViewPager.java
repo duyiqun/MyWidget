@@ -121,6 +121,11 @@ public class MyViewPager extends ViewGroup {
         return true;
     }
 
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        return super.onInterceptTouchEvent(ev);
+    }
+
     /**
      * 当调用invalidate()方法重绘View时，该方法会被回调
      */
