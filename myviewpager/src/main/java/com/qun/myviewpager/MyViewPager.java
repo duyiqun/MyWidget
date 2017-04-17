@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Scroller;
 
 /**
  * Created by Qun on 2017/4/16.
@@ -13,9 +14,11 @@ import android.widget.ImageView;
 
 public class MyViewPager extends ViewGroup {
 
+    private static final String TAG = "MyViewPager";
     private int mMeasuredWidth;
     private int mMeasuredHeight;
     private float mStartX;
+    private Scroller mScroller;
 
     public MyViewPager(Context context) {
         this(context, null);
@@ -23,8 +26,10 @@ public class MyViewPager extends ViewGroup {
 
     public MyViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-
+        //初始化Scroller
+        mScroller = new Scroller(getContext());
+//        final float ppi = context.getResources().getDisplayMetrics().density * 160.0f;
+//        Log.d(TAG, "MyViewPager: " + ppi);
     }
 
     public MyViewPager(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -72,7 +77,6 @@ public class MyViewPager extends ViewGroup {
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             child.layout(mMeasuredWidth * i, 0, mMeasuredWidth * (i + 1), mMeasuredHeight);
-
         }
     }
 
@@ -86,15 +90,52 @@ public class MyViewPager extends ViewGroup {
                 float mCurrentX = event.getX();
                 float dx = mStartX - mCurrentX;
                 mStartX = mCurrentX;
-                
+                //获取上次累计的偏移量 + dx
+                //getScrollX() ViewGroup已经发生的偏移量（往左滚动是正的）
+                float newScrollX = getScrollX() + dx;
+                if (newScrollX < 0) {
+                    scrollTo(0, 0);
+                } else if (newScrollX > mMeasuredWidth * (getChildCount() - 1)) {
+                    scrollTo(mMeasuredWidth * (getChildCount() - 1), 0);
+                } else {
+                    //让ViewGroup整体移动dx距离
+                    scrollBy((int) dx, 0);
+                }
                 break;
             case MotionEvent.ACTION_UP:
-
+                //当ViewGroup正好滚动到一个完整的位置
+                int scrollX = getScrollX();
+                int position = (int) ((scrollX + 0.f) / mMeasuredWidth + 0.5f);
+                //使用mScroller，将ViewGroup平滑的滚动到 mMeasuredWidth*position
+                int dx2 = mMeasuredWidth * position - scrollX;
+                /**
+                 * 注意：该mScroller开始滚动其实是内部开始计算某时刻当前的ViewGroup应该滚动到哪里
+                 *       需要不断的去mScroller中获取当前应该滚动到的位置，然后自己调用scrollTo（）实现滚动
+                 */
+                mScroller.startScroll(scrollX, 0, dx2, 0, Math.abs(dx2));
+                invalidate();
                 break;
             default:
                 break;
         }
         return true;
+    }
+
+    /**
+     * 当调用invalidate()方法重绘View时，该方法会被回调
+     */
+    @Override
+    public void computeScroll() {
+        super.computeScroll();
+        //判断mScroller有没有滚动完成
+        if (mScroller.computeScrollOffset()) {
+            //获取当前ViewGroup应该你滚动到哪里
+            int currX = mScroller.getCurrX();
+            //让当前ViewGroup移动到这个位置
+            scrollTo(currX, 0);
+            //重新让系统重绘
+            invalidate();
+        }
     }
 
     /**
