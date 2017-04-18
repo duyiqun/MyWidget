@@ -5,7 +5,10 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 /**
  * Created by Qun on 2017/4/18.
@@ -16,6 +19,11 @@ public class RefreshListView extends ListView {
     private View mHeaderView;
     private int mMeasuredHeight;
     private float mStartY;
+    private State currentState = State.pull2Refresh;
+    private ProgressBar mPbHeader;
+    private ImageView mIvArrow;
+    private TextView mTvTime;
+    private TextView mTvState;
 
     public RefreshListView(Context context) {
         this(context, null);
@@ -36,6 +44,10 @@ public class RefreshListView extends ListView {
 
     private void initHeaderView() {
         mHeaderView = LayoutInflater.from(getContext()).inflate(R.layout.header_layout, this, false);
+        mPbHeader = (ProgressBar) mHeaderView.findViewById(R.id.pb_header);
+        mIvArrow = (ImageView) mHeaderView.findViewById(R.id.iv_arrow);
+        mTvTime = (TextView) mHeaderView.findViewById(R.id.tv_time);
+        mTvState = (TextView) mHeaderView.findViewById(R.id.tv_state);
         //将headerView添加到ListView的头部（这是ListView本身支持的功能而RecyclerView没有这样的功能）
         addHeaderView(mHeaderView);
         //想获取headerView的高度，必须手动测量一下
@@ -69,6 +81,13 @@ public class RefreshListView extends ListView {
                         //将move事件交给ListView处理
                         return super.onTouchEvent(ev);
                     } else {
+                        if (newPaddingTop > 0) {//将状态改为松开刷新，提示用户松手
+                            currentState = State.release2Refresh;
+                        } else {//将状态改为下拉刷新
+                            currentState = State.pull2Refresh;
+                        }
+                        updateArrow();
+                        mTvState.setText(currentState.name);
                         mHeaderView.setPadding(0, newPaddingTop, 0, 0);
                         return true;
                     }
@@ -81,5 +100,18 @@ public class RefreshListView extends ListView {
                 break;
         }
         return super.onTouchEvent(ev);
+    }
+
+    private void updateArrow() {
+
+    }
+
+    enum State {
+        pull2Refresh("下拉刷新"), release2Refresh("松开刷新"), refreshing("正在刷新");
+        private String name;
+
+        State(String name) {
+            this.name = name;
+        }
     }
 }
