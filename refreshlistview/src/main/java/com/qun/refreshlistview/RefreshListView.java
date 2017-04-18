@@ -5,10 +5,15 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import static com.qun.refreshlistview.RefreshListView.State.pull2Refresh;
+import static com.qun.refreshlistview.RefreshListView.State.release2Refresh;
 
 /**
  * Created by Qun on 2017/4/18.
@@ -19,7 +24,10 @@ public class RefreshListView extends ListView {
     private View mHeaderView;
     private int mMeasuredHeight;
     private float mStartY;
-    private State currentState = State.pull2Refresh;
+    //记录当前HeaderView的状态
+    private State currentState = pull2Refresh;
+    //记录上一次改变后的状态
+    private State preState = pull2Refresh;
     private ProgressBar mPbHeader;
     private ImageView mIvArrow;
     private TextView mTvTime;
@@ -82,9 +90,9 @@ public class RefreshListView extends ListView {
                         return super.onTouchEvent(ev);
                     } else {
                         if (newPaddingTop > 0) {//将状态改为松开刷新，提示用户松手
-                            currentState = State.release2Refresh;
+                            currentState = release2Refresh;
                         } else {//将状态改为下拉刷新
-                            currentState = State.pull2Refresh;
+                            currentState = pull2Refresh;
                         }
                         updateArrow();
                         mTvState.setText(currentState.name);
@@ -102,8 +110,24 @@ public class RefreshListView extends ListView {
         return super.onTouchEvent(ev);
     }
 
+    /**
+     * 改变箭头的方向
+     */
     private void updateArrow() {
+        if (preState == State.pull2Refresh && currentState == State.release2Refresh) {
+            beginAnimation(0, 180);
+            preState = currentState;
+        } else if (preState == State.release2Refresh && currentState == State.pull2Refresh) {
+            beginAnimation(180, 360);
+            preState = currentState;
+        }
+    }
 
+    private void beginAnimation(int startDegree, int toDegree) {
+        RotateAnimation rotateAnimation = new RotateAnimation(startDegree, toDegree, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        rotateAnimation.setDuration(500);
+        rotateAnimation.setFillAfter(true);
+        mIvArrow.startAnimation(rotateAnimation);
     }
 
     enum State {
