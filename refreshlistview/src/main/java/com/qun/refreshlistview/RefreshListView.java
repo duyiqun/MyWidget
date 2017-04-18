@@ -15,7 +15,7 @@ public class RefreshListView extends ListView {
 
     public RefreshListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        
+
     }
 
     public RefreshListView(Context context, AttributeSet attrs, int defStyleAttr) {
