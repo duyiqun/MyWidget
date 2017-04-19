@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@mipmap/menu_bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/channel_selector"
+            android:drawableLeft="@mipmap/tab_news"
+            android:drawablePadding="10dp"
+            android:text="新闻"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/channel_selector"
+            android:drawableLeft="@mipmap/tab_focus"
+            android:drawablePadding="10dp"
+            android:text="聚焦"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/channel_selector"
+            android:drawableLeft="@mipmap/tab_local"
+            android:drawablePadding="10dp"
+            android:text="本地"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/channel_selector"
+            android:drawableLeft="@mipmap/tab_pics"
+            android:drawablePadding="10dp"
+            android:text="图片"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/channel_selector"
+            android:drawableLeft="@mipmap/tab_read"
+            android:drawablePadding="10dp"
+            android:text="阅读"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/channel_selector"
+            android:drawableLeft="@mipmap/tab_ties"
+            android:drawablePadding="10dp"
+            android:text="讨论"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/channel_selector"
+            android:drawableLeft="@mipmap/tab_ugc"
+            android:drawablePadding="10dp"
+            android:text="话题"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/channel_selector"
+            android:drawableLeft="@mipmap/tab_vote"
+            android:drawablePadding="10dp"
+            android:text="投票"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/channel_selector"
+            android:drawableLeft="@mipmap/tab_news"
+            android:drawablePadding="10dp"
+            android:text="新闻"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/channel_selector"
+            android:drawableLeft="@mipmap/tab_focus"
+            android:drawablePadding="10dp"
+            android:text="聚焦"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/channel_selector"
+            android:drawableLeft="@mipmap/tab_local"
+            android:drawablePadding="10dp"
+            android:text="本地"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/channel_selector"
+            android:drawableLeft="@mipmap/tab_pics"
+            android:drawablePadding="10dp"
+            android:text="图片"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/channel_selector"
+            android:drawableLeft="@mipmap/tab_read"
+            android:drawablePadding="10dp"
+            android:text="阅读"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/channel_selector"
+            android:drawableLeft="@mipmap/tab_ties"
+            android:drawablePadding="10dp"
+            android:text="讨论"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/channel_selector"
+            android:drawableLeft="@mipmap/tab_ugc"
+            android:drawablePadding="10dp"
+            android:text="话题"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/channel_selector"
+            android:drawableLeft="@mipmap/tab_vote"
+            android:drawablePadding="10dp"
+            android:text="投票"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+    </LinearLayout>
+
+</ScrollView>
