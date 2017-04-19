@@ -24,8 +24,9 @@ import static com.qun.refreshlistview.RefreshListView.State.release2Refresh;
 
 public class RefreshListView extends ListView {
 
+    private static final String TAG = "RefreshListView";
     private View mHeaderView;
-    private int mMeasuredHeight;
+    private int mHeaderViewHeight;
     private float mStartY;
     //记录当前HeaderView的状态
     private State currentState = pull2Refresh;
@@ -35,6 +36,9 @@ public class RefreshListView extends ListView {
     private ImageView mIvArrow;
     private TextView mTvTime;
     private TextView mTvState;
+    private View mFooterView;
+    private int mFooterViewHeight;
+    private boolean isLoadMore;
 
     public RefreshListView(Context context) {
         this(context, null);
@@ -43,6 +47,7 @@ public class RefreshListView extends ListView {
     public RefreshListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initHeaderView();
+        initFooterView();
     }
 
     public RefreshListView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -63,9 +68,19 @@ public class RefreshListView extends ListView {
         addHeaderView(mHeaderView);
         //想获取headerView的高度，必须手动测量一下
         mHeaderView.measure(0, 0);//00  0000000000000011000
-        mMeasuredHeight = mHeaderView.getMeasuredHeight();
+        mHeaderViewHeight = mHeaderView.getMeasuredHeight();
+//        Log.d(TAG, "initHeaderView: "+mHeaderViewHeight);
         //默认隐藏HeaderView
-        mHeaderView.setPadding(0, -mMeasuredHeight, 0, 0);
+        mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
+    }
+
+    private void initFooterView() {
+        mFooterView = LayoutInflater.from(getContext()).inflate(R.layout.footer_layout, this, false);
+        addFooterView(mFooterView);
+        //隐藏footerView
+        mFooterView.measure(0, 0);
+        mFooterViewHeight = mFooterView.getMeasuredHeight();
+        mFooterView.setPadding(0, -mFooterViewHeight, 0, 0);
     }
 
     @Override
@@ -81,6 +96,7 @@ public class RefreshListView extends ListView {
                 mStartY = currentY;
 
                 if (currentState == refreshing) {
+                    //当HeaderView正在刷新的时候，将触摸事件交给ListView本身
                     return super.onTouchEvent(ev);
                 }
 
@@ -92,8 +108,8 @@ public class RefreshListView extends ListView {
                     //在HeaderView原有内边距的基础上+dy
                     int paddingTop = mHeaderView.getPaddingTop();
                     int newPaddingTop = (int) (paddingTop + dy);
-                    if (newPaddingTop < -mMeasuredHeight) {//就是上推到HeaderView正好完全隐藏，如果还往上推
-                        mHeaderView.setPadding(0, -mMeasuredHeight, 0, 0);
+                    if (newPaddingTop < -mHeaderViewHeight) {//就是上推到HeaderView正好完全隐藏，如果还往上推
+                        mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
                         //将headerView的padding固定死
                         //将move事件交给ListView处理
                         return super.onTouchEvent(ev);
@@ -108,11 +124,25 @@ public class RefreshListView extends ListView {
                         mHeaderView.setPadding(0, newPaddingTop, 0, 0);
                         return true;
                     }
+                } else if (getLastVisiblePosition() == getCount() - 1) {//已经到最低了
+//                    Log.d(TAG, "getCount: "+getCount());
+//                    Log.d(TAG, "getChildCount: "+getChildCount());//能看见的子控件个数
+                    if (dy < 0) {//还往上拉
+                        // 显示FooterView
+                        mFooterView.setPadding(0, 0, 0, 0);
+                        if (mOnRefreshingListener != null) {
+                            //如果已经正在加载更多，则不要继续回调该方法
+                            if (!isLoadMore) {
+                                mOnRefreshingListener.onLoadMore();
+                                isLoadMore = true;
+                            }
+                        }
+                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
                 if (currentState == pull2Refresh) {//没有完全拉出来，松手了
-                    mHeaderView.setPadding(0, -mMeasuredHeight, 0, 0);
+                    mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
                 } else if (currentState == release2Refresh) {
                     mHeaderView.setPadding(0, 0, 0, 0);
                     currentState = State.refreshing;
@@ -120,6 +150,7 @@ public class RefreshListView extends ListView {
                     mIvArrow.setVisibility(GONE);
                     mPbHeader.setVisibility(VISIBLE);
                     mTvState.setText(currentState.name);
+                    //回调接口对象
                     if (mOnRefreshingListener != null) {
                         mOnRefreshingListener.onRefreshing();
                     }
@@ -153,11 +184,11 @@ public class RefreshListView extends ListView {
     }
 
     public void setRefresh(boolean isRefresh) {
-        if (!isRefresh) {
+        if (!isRefresh) {//停止刷新动画
             //将状态恢复成最原始的状态
             currentState = pull2Refresh;
             preState = pull2Refresh;
-            mHeaderView.setPadding(0, -mMeasuredHeight, 0, 0);
+            mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
             //重新将箭头方向给转过来
             beginAnimation(180, 0);
             //更改最近修改时间
@@ -177,6 +208,11 @@ public class RefreshListView extends ListView {
         return sdf.format(new Date());
     }
 
+    public void stopLoadMore() {
+        isLoadMore = false;
+        mFooterView.setPadding(0, -mFooterViewHeight, 0, 0);
+    }
+
     enum State {
         pull2Refresh("下拉刷新"), release2Refresh("松开刷新"), refreshing("正在刷新");
         private String name;
@@ -188,6 +224,8 @@ public class RefreshListView extends ListView {
 
     public interface onRefreshingListener {
         void onRefreshing();
+
+        void onLoadMore();
     }
 
     private onRefreshingListener mOnRefreshingListener;

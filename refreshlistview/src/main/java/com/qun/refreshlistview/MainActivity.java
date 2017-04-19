@@ -48,6 +48,18 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }, 2000);
             }
+
+            @Override
+            public void onLoadMore() {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        dataList.add("加载更多的数据" + new Date());
+                        arrayAdapter.notifyDataSetChanged();
+                        mRefreshListView.stopLoadMore();
+                    }
+                }, 1000);
+            }
         });
     }
 }
