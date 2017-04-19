@@ -1,18 +1,21 @@
 package com.qun.refreshlistview;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import static com.qun.refreshlistview.RefreshListView.State.pull2Refresh;
+import static com.qun.refreshlistview.RefreshListView.State.refreshing;
 import static com.qun.refreshlistview.RefreshListView.State.release2Refresh;
 
 /**
@@ -77,8 +80,14 @@ public class RefreshListView extends ListView {
                 float dy = currentY - mStartY;
                 mStartY = currentY;
 
+                if (currentState == refreshing) {
+                    return super.onTouchEvent(ev);
+                }
+
                 //如果是能看到的是第一个位置，则走自己的逻辑
                 if (getFirstVisiblePosition() == 0) {
+                    mIvArrow.setVisibility(VISIBLE);
+                    mPbHeader.setVisibility(GONE);
                     //将dy加给HeaderView的内边距，让其内边距变大
                     //在HeaderView原有内边距的基础上+dy
                     int paddingTop = mHeaderView.getPaddingTop();
@@ -102,7 +111,19 @@ public class RefreshListView extends ListView {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-
+                if (currentState == pull2Refresh) {//没有完全拉出来，松手了
+                    mHeaderView.setPadding(0, -mMeasuredHeight, 0, 0);
+                } else if (currentState == release2Refresh) {
+                    mHeaderView.setPadding(0, 0, 0, 0);
+                    currentState = State.refreshing;
+                    //隐藏箭头显示进度条
+                    mIvArrow.setVisibility(GONE);
+                    mPbHeader.setVisibility(VISIBLE);
+                    mTvState.setText(currentState.name);
+                    if (mOnRefreshingListener != null) {
+                        mOnRefreshingListener.onRefreshing();
+                    }
+                }
                 break;
             default:
                 break;
@@ -124,10 +145,36 @@ public class RefreshListView extends ListView {
     }
 
     private void beginAnimation(int startDegree, int toDegree) {
-        RotateAnimation rotateAnimation = new RotateAnimation(startDegree, toDegree, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        rotateAnimation.setDuration(500);
-        rotateAnimation.setFillAfter(true);
-        mIvArrow.startAnimation(rotateAnimation);
+//        RotateAnimation rotateAnimation = new RotateAnimation(startDegree, toDegree, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+//        rotateAnimation.setDuration(500);
+//        rotateAnimation.setFillAfter(true);
+//        mIvArrow.startAnimation(rotateAnimation);
+        ObjectAnimator.ofFloat(mIvArrow, "rotation", startDegree, toDegree).setDuration(500).start();
+    }
+
+    public void setRefresh(boolean isRefresh) {
+        if (!isRefresh) {
+            //将状态恢复成最原始的状态
+            currentState = pull2Refresh;
+            preState = pull2Refresh;
+            mHeaderView.setPadding(0, -mMeasuredHeight, 0, 0);
+            //重新将箭头方向给转过来
+            beginAnimation(180, 0);
+            //更改最近修改时间
+            String time = getTimeString();
+            mTvTime.setText(time);
+        } else {
+            currentState = refreshing;
+            mTvState.setText(currentState.name);
+            mIvArrow.setVisibility(GONE);
+            mPbHeader.setVisibility(VISIBLE);
+            mHeaderView.setPadding(0, 0, 0, 0);
+        }
+    }
+
+    private String getTimeString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(new Date());
     }
 
     enum State {
@@ -137,5 +184,15 @@ public class RefreshListView extends ListView {
         State(String name) {
             this.name = name;
         }
+    }
+
+    public interface onRefreshingListener {
+        void onRefreshing();
+    }
+
+    private onRefreshingListener mOnRefreshingListener;
+
+    public void setOnRefreshingListener(onRefreshingListener onRefreshingListener) {
+        this.mOnRefreshingListener = onRefreshingListener;
     }
 }
