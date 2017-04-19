@@ -1,1 +1,1 @@
-include ':youkumenu', ':advertisementbar', ':togglebutton', ':cascading', ':myviewpager', ':eventdispatch', ':refreshlistview'
+include ':youkumenu', ':advertisementbar', ':togglebutton', ':cascading', ':myviewpager', ':eventdispatch', ':refreshlistview', ':slidemenu'
