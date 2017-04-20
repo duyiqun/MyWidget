@@ -2,6 +2,7 @@ package com.qun.slidemenu;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -17,6 +18,8 @@ public class SlideMenu extends ViewGroup {
     private int mMenuHeight;
     private int mMainWidth;
     private int mMainHeight;
+    private float mStartX;
+    private float mCurrentX;
 
     public SlideMenu(Context context) {
         this(context, null);
@@ -54,5 +57,26 @@ public class SlideMenu extends ViewGroup {
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         mMenuView.layout(-mMenuWidth, 0, 0, mMenuHeight);
         mMainView.layout(0, 0, mMainWidth, mMainHeight);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mStartX = event.getX();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                mCurrentX = event.getX();
+                float dx = mStartX - mCurrentX;
+                mStartX = mCurrentX;
+                scrollBy((int) dx, 0);
+                break;
+            case MotionEvent.ACTION_UP:
+
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 }
