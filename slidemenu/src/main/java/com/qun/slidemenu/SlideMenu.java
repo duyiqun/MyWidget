@@ -70,7 +70,7 @@ public class SlideMenu extends ViewGroup {
                 } else {
                     scrollBy((int) dx, 0);
                 }
-                return false;
+                return true;
             }
 
             @Override
