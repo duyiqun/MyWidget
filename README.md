@@ -1,5 +1,5 @@
 # MyWidget
-  android自定义控件的示例代码
+  Android自定义控件的示例代码
 
 	1.优酷菜单
 	2.广告条
