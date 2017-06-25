@@ -33,6 +33,6 @@
         android:text="这是新闻的标题"
         android:textAllCaps="false"
         android:textColor="#ffffff"
-        android:textSize="26dp"/>
+        android:textSize="26sp"/>
 
 </RelativeLayout>
